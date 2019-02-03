@@ -302,7 +302,7 @@ class BaseFilterSet(object):
 
         default = {
             'name': name,
-            'label': capfirst(f.verbose_name)
+            'label': capfirst(getattr(f, 'verbose_name', f.name))
         }
 
         if f.choices:
