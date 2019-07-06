@@ -6,12 +6,22 @@ from datetime import timedelta
 
 from django import forms
 from mongoengine import Q
-from django.db.models.sql.constants import QUERY_TERMS
 from django.utils import six
 from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
 
 from .fields import RangeField, LookupTypeField, Lookup
+
+try:
+    from django.db.models.sql.constants import QUERY_TERMS
+except ImportError:
+    # Django 2.1+ does not have QUERY_TERMS anymore
+    QUERY_TERMS = {
+        'contains', 'day', 'endswith', 'exact', 'gt', 'gte', 'hour',
+        'icontains', 'iendswith', 'iexact', 'in', 'iregex', 'isnull',
+        'istartswith', 'lt', 'lte', 'minute', 'month', 'range', 'regex',
+        'search', 'second', 'startswith', 'week_day', 'year',
+    }
 
 
 __all__ = [
