@@ -170,7 +170,7 @@ class BaseFilterSet(object):
     order_by_field = ORDER_BY_FIELD
     strict = True
 
-    def __init__(self, data=None, queryset=None, prefix=None, strict=None):
+    def __init__(self, data=None, queryset=None, prefix=None, strict=None, request=None):
         self.is_bound = data is not None
         self.data = data or {}
         if queryset is None:
@@ -179,6 +179,7 @@ class BaseFilterSet(object):
         self.form_prefix = prefix
         if strict is not None:
             self.strict = strict
+        self.request = request
 
         self.filters = deepcopy(self.base_filters)
         # propagate the model being used through the filters
