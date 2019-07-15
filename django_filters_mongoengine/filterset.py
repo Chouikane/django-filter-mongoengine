@@ -196,34 +196,20 @@ class BaseFilterSet(object):
     def __getitem__(self, key):
         return self.qs[key]
 
+    def is_valid(self):
+        """
+        Return True if the underlying form has no errors, or False otherwise.
+        """
+        return self.is_bound and self.form.is_valid()
+
     @property
     def qs(self):
         if not hasattr(self, '_qs'):
-            valid = self.is_bound and self.form.is_valid()
-
-            if self.strict and self.is_bound and not valid:
-                self._qs = self.queryset.none()
-                return self._qs
-
             # start with all the results and filter from there
             qs = self.queryset.all()
             for name, filter_ in six.iteritems(self.filters):
                 value = None
-                if valid:
-                    value = self.form.cleaned_data[name]
-                else:
-                    raw_value = self.form[name].value()
-                    try:
-                        value = self.form.fields[name].clean(raw_value)
-                    except forms.ValidationError:
-                        # for invalid values either:
-                        # strictly "apply" filter yielding no results and get outta here
-                        if self.strict:
-                            self._qs = self.queryset.none()
-                            return self._qs
-                        else:  # or ignore this filter altogether
-                            pass
-
+                value = self.form.cleaned_data[name]
                 if value is not None:  # valid & clean data
                     qs = filter_.filter(qs, value)
 
